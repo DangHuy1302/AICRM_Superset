@@ -1,0 +1,21 @@
+# 1. Chặn môi trường ảo (Bắt buộc phải chặn vì lệch đường dẫn máy khác)
+venv/
+
+# 2. File rác Python & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# 3. Static/Media tạm & Log
+staticfiles/
+*.log
+
+# 4. Cấu hình IDE cá nhân
+.vscode/
+.idea/
+
+# 5. Cache test
+.pytest_cache/
+.coverage
+htmlcov/

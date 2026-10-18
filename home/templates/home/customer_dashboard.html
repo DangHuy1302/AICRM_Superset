@@ -1,0 +1,100 @@
+{% load static wagtailcore_tags %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>AI CRM Dashboard</title>
+    <!-- Nhúng Bootstrap 5 để làm đẹp giao diện tự động -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .badge-high { background-color: #198754; color: white; } /* Xanh lá */
+        .badge-medium { background-color: #ffc107; color: black; } /* Vàng */
+        .badge-low { background-color: #dc3545; color: white; } /* Đỏ */
+        .badge-error { background-color: #6c757d; color: white; } /* Xám */
+    </style>
+</head>
+<body>
+    <!-- Thanh điều hướng Navbar -->
+    <nav class="navbar navbar-dark bg-primary mb-4 shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold ms-3" href="#">🚀 Hệ thống AI CRM</a>
+        </div>
+    </nav>
+
+    <div class="container-fluid px-4">
+        <div class="row">
+            <!-- Cột Trái: Form Nhập Liệu -->
+            <div class="col-lg-4 mb-4">
+                <div class="card p-4">
+                    <h5 class="card-title fw-bold mb-4 text-primary">Thêm khách hàng mới</h5>
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Tên khách hàng</label>
+                            <input type="text" name="name" class="form-control" required placeholder="Nhập tên...">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Email</label>
+                            <input type="email" name="email" class="form-control" required placeholder="name@example.com">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Ghi chú tương tác</label>
+                            <textarea name="interaction_notes" class="form-control" rows="4" required placeholder="Ghi lại yêu cầu, thái độ của khách..."></textarea>
+                        </div>
+                        <!-- Nút Submit -->
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">
+                            Lưu & Phân loại bằng AI
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Cột Phải: Bảng Danh Sách -->
+            <div class="col-lg-8">
+                <div class="card p-4">
+                    <h5 class="card-title fw-bold mb-4 text-primary">Danh sách khách hàng</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Tên khách hàng</th>
+                                    <th>Email</th>
+                                    <th>Ghi chú tương tác</th>
+                                    <th>Mức độ tiềm năng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for customer in customers %}
+                                <tr>
+                                    <td class="fw-bold">{{ customer.name }}</td>
+                                    <td>{{ customer.email }}</td>
+                                    <td style="max-width: 250px;">{{ customer.interaction_notes }}</td>
+                                    <td>
+                                        <!-- Đổi màu Tag dựa theo kết quả AI trả về -->
+                                        {% if "cao" in customer.ai_category|lower %}
+                                            <span class="badge badge-high px-3 py-2">{{ customer.ai_category }}</span>
+                                        {% elif "trung bình" in customer.ai_category|lower %}
+                                            <span class="badge badge-medium px-3 py-2">{{ customer.ai_category }}</span>
+                                        {% elif "thấp" in customer.ai_category|lower %}
+                                            <span class="badge badge-low px-3 py-2">{{ customer.ai_category }}</span>
+                                        {% else %}
+                                            <span class="badge badge-error px-3 py-2">{{ customer.ai_category }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-4">Chưa có khách hàng nào.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+services:
+  superset:
+    image: apache/superset:latest
+    container_name: superset
+    user: root   # de dam bao doc duoc file mount va khoi tao DB metadata
+    ports:
+      - "8089:8088"
+      - "127.0.0.1:5008:5008"
+    environment:
+      SUPERSET_CONFIG_PATH: /app/pythonpath/superset_config.py
+      SUPERSET_SECRET_KEY: "doi-chuoi-nay-thanh-mot-chuoi-ngau-nhien-dai-32-ky-tu-tro-len"
+    volumes:
+      # Mount file SQLite o che do chi doc (read-only) vao container
+      - ./db.sqlite3:/app/data/db.sqlite3:ro
+      - ./superset_config.py:/app/pythonpath/superset_config.py:ro
+      - superset_home:/app/superset_home
+    command:
+      - /bin/sh
+      - -c
+      - |
+        uv pip install --python /app/.venv --quiet 'apache-superset[fastmcp]' 2>/dev/null || true
+        chmod 444 /app/data/db.sqlite3 2>/dev/null || true
+        superset db upgrade &&
+        superset fab create-admin --username admin --firstname Admin --lastname User --email admin@example.com --password admin || true
+        superset init &&
+        superset mcp run --host 0.0.0.0 --port 5008 &
+        superset run -h 0.0.0.0 -p 8088 --with-threads --reload
+
+volumes:
+  superset_home:
+
