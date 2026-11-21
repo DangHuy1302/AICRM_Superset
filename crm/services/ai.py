@@ -3,7 +3,10 @@ import logging
 import os
 from enum import Enum
 from typing import Optional
+from dotenv import load_dotenv
 from pydantic import BaseModel, Field, field_validator
+
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
